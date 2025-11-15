@@ -12,15 +12,7 @@ Además, incluye consultas para:
 - Actualizar o corregir referencias de pago (en casos de errores).
 - Procesar manualmente pagos represados que no se subieron automáticamente a ICEBERG.
 
-------------------------------------------------------------------------------------------------
-VALIDACIONES PRINCIPALES:
-1. Verificar primero en **PLACETOPAY** que la transacción tenga estado **APPROVED**.
-2. Confirmar que el pago aparezca en las tablas del esquema **PORTAL_PAGOS_CUN**.
-3. Validar si el registro fue replicado correctamente en **ICEBERG**.
-4. En caso contrario, ejecutar los procedimientos o actualizaciones necesarias 
-   según el tipo de pago (Crédito, Orden o Pecuniario).
 
-------------------------------------------------------------------------------------------------
 
 Validacion pagos -------------------------------REJECTED----------------------------APPROVED-----------------------
 
@@ -28,6 +20,16 @@ Validacion pagos -------------------------------REJECTED------------------------
 /*-----------------------------------------------------------
 SECCIÓN 1: VALIDACIÓN DE PAGOS EN EL PORTAL (PLACETOPAY)
 -----------------------------------------------------------*/
+
+/*------------------------------------------------------------------------------------------------
+VALIDACIONES PRINCIPALES:
+1. Verificar primero en **PLACETOPAY** que la transacción tenga estado **APPROVED**.
+2. Confirmar que el pago aparezca en las tablas del esquema **PORTAL_PAGOS_CUN**.
+3. Validar si el registro fue replicado correctamente en **ICEBERG**.
+4. En caso contrario, ejecutar los procedimientos o actualizaciones necesarias 
+   según el tipo de pago (Crédito, Orden o Pecuniario).
+
+------------------------------------------------------------------------------------------------*/ 
 
 /* Validar si la transacción aparece con estado APPROVED
    Muestra el historial de pagos por documento
@@ -48,7 +50,7 @@ ORDER BY FECHA DESC;
 */
 SELECT * 
 FROM PORTAL_PAGOS_CUN.ppt_cun_transaccion_pago 
-WHERE referencia IN ('3210435', ''); -- Tabla 1
+WHERE referencia IN ('118660202', ''); -- Tabla 1
 
 
 /* Consultar detalles de la transacción asociada a una referencia específica */
@@ -62,10 +64,10 @@ WHERE referencia IN ('118660202', ''); -- Tabla 2
 */
 SELECT * 
 FROM PORTAL_PAGOS_CUN.ppt_cun_detalle_respuesta_pago  
-WHERE referencia IN ('118621847', '', '');  -- Tabla 3
+WHERE referencia IN ('118660202', '', '');  -- Tabla 3
 
 
---Nomenclatura banco se utilizas crear la nueva linea de pago a cargar en iceberd
+--Nomenclatura banco se utilizas se utiliza como referencias para crear la nueva linea de pago a cargar en iceberd
 SELECT * FROM PORTAL_PAGOS_CUN.PPT_CUN_RESPUESTA_PAGO p
 WHERE p.PAYMENTMETHODNAME  = 'Credibanco Visa';--110770968
 
@@ -99,7 +101,7 @@ SECCIÓN 4: PROCESAR PAGOS REPRESADOS MANUALMENTE
 
 /* Se utiliza cuando el pago quedó registrado en el portal 
    pero no se cargó automáticamente en ICEBERG.
-   pero solo se hace cuando esta en la tabla 1 y 2 , en tal caso que no esta se crea la linea en la tabla 2  
+   pero solo se hace cuando esta en la tabla 1 y 2 y no aparece en la tabla 3 , en tal caso que no esta se crea la linea en la tabla 2  
 
    Parámetros:
    - referencia (número de pago)
@@ -137,7 +139,7 @@ WHERE T.recibo_agrupado IN ('118376914');
 /* PAGOS DE ORDENES */
 SELECT T.*, ROWID 
 FROM PORTAL_PAGOS_CUN.Ppt_Cun_Base_ORDENES T 
-WHERE recibo_agrupado IN ('118621847');
+WHERE recibo_agrupado IN ('1023702422');
 
 
 /* PAGOS PECUNIARIOS */
@@ -183,6 +185,5 @@ COMMIT;
 DELETE FROM PORTAL_PAGOS_CUN.ppt_cun_transaccion_pago 
 WHERE referencia IN ('118248441');
 COMMIT;
-
 
 
