@@ -1,5 +1,5 @@
 /***********************************************************************************************
-PROCESO: Validación, Gestión de Pagos,Cargar pagos
+PROCESO: Validación, Gestión de Pagos,Cargar pagos, Rechazar pagos
 ------------------------------------------------------------------------------------------------
 DESCRIPCIÓN GENERAL:
 Este proceso permite validar el estado de los pagos realizados por los estudiantes en el 
@@ -12,13 +12,8 @@ Además, incluye consultas para:
 - Actualizar o corregir referencias de pago (en casos de errores).
 - Procesar manualmente pagos represados que no se subieron automáticamente a ICEBERG.
 
-
-
-Validacion pagos -------------------------------REJECTED----------------------------APPROVED-----------------------
-
-
 /*-----------------------------------------------------------
-SECCIÓN 1: VALIDACIÓN DE PAGOS EN EL PORTAL (PLACETOPAY)
+SECCIÓN 1: VALIDACIÓN DE PAGOS EN EL PORTAL (PLACETOPAY)/ RECHAZAR PAGOS
 -----------------------------------------------------------*/
 
 /*------------------------------------------------------------------------------------------------
@@ -31,18 +26,21 @@ VALIDACIONES PRINCIPALES:
 
 ------------------------------------------------------------------------------------------------*/ 
 
+--Validacion pagos -------------------------------REJECTED----------------------------APPROVED-----------------------
+
 /* Validar si la transacción aparece con estado APPROVED
    Muestra el historial de pagos por documento
+   Si aparece Pendig en placetopay no se puede rechazar hasta que pase a rechazado
 */
 -- busqueda por cc
 SELECT t.ESTADO, t.ESTADO_ICEBERG, t.* 
 FROM PORTAL_PAGOS_CUN.ppt_cun_transaccion_pago t 
-WHERE documento IN ('1085906367')
+WHERE documento IN ('15889457')
 ORDER BY FECHA DESC;
 -- busqueda por referencia
 SELECT t.ESTADO, t.ESTADO_ICEBERG, t.* 
 FROM PORTAL_PAGOS_CUN.ppt_cun_transaccion_pago t 
-WHERE t.REFERENCIA  IN ('118660202')
+WHERE t.REFERENCIA  IN ('118663471')
 ORDER BY FECHA DESC;
 
 /* Consultar historial de pago por referencia
@@ -50,7 +48,7 @@ ORDER BY FECHA DESC;
 */
 SELECT * 
 FROM PORTAL_PAGOS_CUN.ppt_cun_transaccion_pago 
-WHERE referencia IN ('118660202', ''); -- Tabla 1
+WHERE referencia IN ('118663471', ''); -- Tabla 1
 
 
 /* Consultar detalles de la transacción asociada a una referencia específica */
