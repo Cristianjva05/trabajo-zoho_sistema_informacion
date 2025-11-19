@@ -1,7 +1,8 @@
 /***********************************************************************************************
-PROCESO: Aplicación del 50% de financiación (Proceso manual/automático)
+PROCESO: Aplicación del 50% de financiación (Proceso manual/automático) / error de secuencias
 ------------------------------------------------------------------------------------------------
 DESCRIPCIÓN GENERAL:
+Que es el 50% : el 50% porciento es el descuento que se aplica al estudiante cuando realiza el primer pago del credito en ctayuda , que ese pago inicial es la RPVI
 Este proceso permite aplicar manualmente el 50% de financiación a un estudiante cuando el 
 proceso automático no se ejecuta correctamente. 
 Sucede normalmente cuando:
@@ -19,23 +20,14 @@ VALIDACIONES PREVIAS:
 
 ------------------------------------------------------------------------------------------------
 PROCEDIMIENTO GENERAL:
-1. Revisar en la tabla **LIQUIDACION_ORDEN** si la RPVI está liquidada.
+1. Revisar en la tabla **LIQUIDACION_ORDEN** si la RPVI está liquidada eso se busca con el dato de ORDEN_INICIAL DE LA TABLA 1.
 2. Si está liquidada, verificar en la tabla **cltiene_360_estudiantes** (tabla 3)
    que el proceso no esté registrado.
-3. Obtener la referencia de pago desde la tabla **cunt_tramite_externo** (tabla 1).
+3. Obtener la referencia de pago desde la tabla (tramite)**cunt_tramite_externo** (tabla 1).
 4. Usar la vista **v_inserta_estudiantes_360** para realizar el INSERT en 
    **cltiene_360_estudiantes**, aplicando así el 50%.
 
 ------------------------------------------------------------------------------------------------
-TABLAS Y OBJETOS INVOLUCRADOS:
-- ICEBERG.LIQUIDACION_ORDEN → Liquidaciones por orden.
-- ICEBERG.cunt_tramite_externo → Trámites realizados por el estudiante.
-- ICEBERG.cltiene_transaccion_his → Historial de transacciones del estudiante.
-- ICEBERG.cltiene_360_estudiantes → Estado de financiación (50%, 100%, anulado).
-- ICEBERG.v_inserta_estudiantes_360 → Vista utilizada para insertar el registro del 50%.
-- ICEBERG.ORDEN → Contiene los consecutivos de activación asociados a RPVI.
-
-***********************************************************************************************/
 
 
 /*-----------------------------------------------------------
@@ -45,19 +37,19 @@ SECCIÓN 1: CONSULTAS DE VALIDACIÓN
 /* Buscar la liquidación de una orden específica */
 SELECT * 
 FROM ICEBERG.LIQUIDACION_ORDEN 
-WHERE orden = 110672;
+WHERE orden = 111581; -- Orden_inicial
 
 
 /* Ver todos los trámites realizados por el estudiante */
-SELECT tramite, orden, valor_financiacion, t.*, rowid 
+SELECT tramite, orden,t.ORDEN_INICIAL, valor_financiacion, t.*, rowid 
 FROM iceberg.cunt_tramite_externo t 
-WHERE identificacion = '1030660896';  --- Tabla 1
+WHERE identificacion = '1043657168';  --- Tabla 1
 
 
 /* Ver historial de transacciones del estudiante */
 SELECT t.*, rowid 
 FROM iceberg.cltiene_transaccion_his t 
-WHERE numidentificacion = '1030660896';  --- Tabla 2
+WHERE numidentificacion = '1043657168';  --- Tabla 2
 
 
 /* Ver estado de financiación del estudiante
@@ -71,7 +63,7 @@ WHERE numidentificacion = '1030660896';  --- Tabla 2
 */
 SELECT referencia_pago, orden_cun, valor_financiacion, ESTADO_FINANCIACION, t.*
 FROM iceberg.cltiene_360_estudiantes t 
-WHERE numero_documento IN ('1030660896', '');  --- Tabla 3
+WHERE numero_documento IN ('1043657168', '');  --- Tabla 3
 
 
 
@@ -79,29 +71,28 @@ WHERE numero_documento IN ('1030660896', '');  --- Tabla 3
 SECCIÓN 2: APLICAR EL 50%
 -----------------------------------------------------------*/
 
-/* Insertar el pago en la tabla 360 para aplicar el 50%
+/* Insertar el pago en la tabla 360 para aplicar el 50% , la tabla 3
    - La referencia de pago se obtiene desde la Tabla 1 (campo “tramite”)
    - Se toma de la vista v_inserta_estudiantes_360
 */
 INSERT INTO ICEBERG.cltiene_360_estudiantes
 SELECT * 
 FROM ICEBERG.v_inserta_estudiantes_360  
-WHERE numero_documento = '1030660896' 
-  AND referencia_pago = '118417700';
+WHERE numero_documento = '1043657168'
+  AND referencia_pago = '118626238';-- tramite
 
 
 /* Validar que el registro se haya insertado correctamente */
 SELECT referencia_pago, orden_cun, valor_financiacion, ESTADO_FINANCIACION, t.* 
 FROM ICEBERG.cltiene_360_estudiantes t 
-WHERE numero_documento = '1037654927' 
-  AND referencia_pago = '118401659';
-
+WHERE numero_documento = '53124512' 
+  AND referencia_pago = '118264359';
 
 /* Consultar nuevamente en la vista para validar origen de datos */
 SELECT * 
 FROM ICEBERG.v_inserta_estudiantes_360  
-WHERE numero_documento = '1037654927' 
-  AND referencia_pago = '118401659';
+WHERE numero_documento = '53124512' 
+  AND referencia_pago = '118264359';
 
 
 
@@ -140,7 +131,17 @@ WHERE o.PERIODO LIKE '%25%'
 
 
 /* Validar que se haya actualizado correctamente el consecutivo */
-SELECT O.*, ROWID 
+SELECT O.CONSECUTIVO_ACTIVACION ,O.*, ROWID 
 FROM ICEBERG.ORDEN O 
-WHERE O.CLIENTE_SOLICITADO = '1016949319' 
-  AND O.DOCUMENTO = 'RPVI';
+WHERE O.CLIENTE_SOLICITADO = '1043657168' 
+  AND O.DOCUMENTO = 'RPVI';	
+
+/*-----------------------------------------------------------
+SECCIÓN 4: ERROR DE SECUENCIA
+-----------------------------------------------------------*/
+-- este error sucede cuando en 360 cltiene aparece el letrero rojo y en la informacion secuecia
+
+SELECT * 
+FROM ZOHO_CUN.CUNT_ZOHO_REGISTRO_VIRTUAL czrv 
+WHERE czrv.NUMERO_DOCUMENTO  = '1000469503'
+;
