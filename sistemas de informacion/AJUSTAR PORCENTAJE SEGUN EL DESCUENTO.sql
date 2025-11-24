@@ -50,6 +50,11 @@ SECCIÓN 2: CONSULTA DE DESCUENTOS ACTIVOS
 SELECT *  
 FROM ICEBERG.CUNT_DATOS_AVAL_X_FUERZA cdaxf;
 
+/* Ajustar fecha de vencimiento de grupo de facturacion */
+
+SELECT * FROM ICEBERG.VENCIMIENTO_PERIODO
+WHERE PERIODO = '25P06' AND 
+GRUPO = '' ;
 
 
 /*-----------------------------------------------------------
@@ -82,3 +87,4 @@ CALL cup_reportes_matriculas.recupera_datos_matriculas('2026A');
 CALL cup_reportes_matriculas.recupera_datos_matriculas('25ES4');
 CALL cup_reportes_matriculas.recupera_datos_matriculas('25E05');
 CALL cup_reportes_matriculas.recupera_datos_matriculas('26ES1');
+
