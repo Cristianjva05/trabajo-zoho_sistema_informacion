@@ -1,5 +1,5 @@
 /***********************************************************************************************
-PROCESO: Ajuste de porcentaje según promoción
+PROCESO: Ajuste de porcentaje según promoción /Apertura de grupo de facturacion 
 ------------------------------------------------------------------------------------------------
 DESCRIPCIÓN GENERAL:
 Este proceso valida y ajusta los descuentos o promociones aplicables a los estudiantes
@@ -87,4 +87,5 @@ CALL cup_reportes_matriculas.recupera_datos_matriculas('2026A');
 CALL cup_reportes_matriculas.recupera_datos_matriculas('25ES4');
 CALL cup_reportes_matriculas.recupera_datos_matriculas('25E05');
 CALL cup_reportes_matriculas.recupera_datos_matriculas('26ES1');
+
 
