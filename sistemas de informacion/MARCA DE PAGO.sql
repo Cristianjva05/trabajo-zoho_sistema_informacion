@@ -4,7 +4,7 @@
 
 
 
---Modifica los registros existentes en una tabla
+UPDATE --Modifica los registros existentes en una tabla
 --select * from 
   src_enc_liquidacion L 
 SET 
@@ -25,7 +25,7 @@ WHERE -- Clausula que determina cuentos registros se actualizaran
                             , src_uni_academica U
                           WHERE 
                             B.id_tercero = P.id_tercero
-                            AND B.num_identificacion IN ('1192718504') --Numero de identificacion
+                            AND B.num_identificacion IN ('1144038739') --Numero de identificacion
                             AND U.cod_unidad = P.cod_unidad
                           --AND P.cod_pensum = '1110' 
                           --AND P.cod_unidad = 'VTE01'
