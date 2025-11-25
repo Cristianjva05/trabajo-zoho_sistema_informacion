@@ -37,19 +37,21 @@ SECCIÓN 1: CONSULTAS DE VALIDACIÓN
 /* Buscar la liquidación de una orden específica */
 SELECT * 
 FROM ICEBERG.LIQUIDACION_ORDEN 
-WHERE orden = 111581; -- Orden_inicial
+WHERE orden = 112713; -- Orden_inicial
 
 
 /* Ver todos los trámites realizados por el estudiante */
 SELECT tramite, orden,t.ORDEN_INICIAL, valor_financiacion, t.*, rowid 
 FROM iceberg.cunt_tramite_externo t 
-WHERE identificacion = '1043657168';  --- Tabla 1
+WHERE identificacion = '1030637576';  --- Tabla 1
 
 
 /* Ver historial de transacciones del estudiante */
+/*Si aparece en la primera tabla y no en la segunda toca clear el registro*/
 SELECT t.*, rowid 
 FROM iceberg.cltiene_transaccion_his t 
-WHERE numidentificacion = '1043657168';  --- Tabla 2
+WHERE numidentificacion in ('1030637576','');  --- Tabla 2 -- cc para crear registros 1030637576 -- los datos se consigue de la tabla 1
+ --la referencia es = a tramite ,--MENSAJE = OK-REFERENCIA --ORDEN = ORDEN-- ORDENPAGO = ORDENINICIAL --ID,FECHA_CREACION,USU_CREACION = NULL -- PORCENTAJE_AVAL = 0, FUERZA_COMERCIAL = AGENTE COMERCIAL
 
 
 /* Ver estado de financiación del estudiante
@@ -63,7 +65,7 @@ WHERE numidentificacion = '1043657168';  --- Tabla 2
 */
 SELECT referencia_pago, orden_cun, valor_financiacion, ESTADO_FINANCIACION, t.*
 FROM iceberg.cltiene_360_estudiantes t 
-WHERE numero_documento IN ('1043657168', '');  --- Tabla 3
+WHERE numero_documento IN ('1030637576', '');  --- Tabla 3
 
 
 
@@ -75,11 +77,12 @@ SECCIÓN 2: APLICAR EL 50%
    - La referencia de pago se obtiene desde la Tabla 1 (campo “tramite”)
    - Se toma de la vista v_inserta_estudiantes_360
 */
+-- PARA CREAR EL 50% SIEMPRE TIENE QUE ESTAR EN TABLA 1 Y 2
 INSERT INTO ICEBERG.cltiene_360_estudiantes
 SELECT * 
 FROM ICEBERG.v_inserta_estudiantes_360  
-WHERE numero_documento = '1043657168'
-  AND referencia_pago = '118626238';-- tramite
+WHERE numero_documento = '1030637576'
+  AND referencia_pago = '118952135';-- tramite
 
 
 /* Validar que el registro se haya insertado correctamente */
