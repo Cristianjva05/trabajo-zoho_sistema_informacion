@@ -1,3 +1,6 @@
+-- LA MARCA DE PAGO ES EL APARTADO DE SINU QUE ESTA ROJITO , DEBA QUEDAR EN VERDE , PARA HACER ESO SE DEBE VERIFICAR QUE LA PERSONA FINANCIACION 
+
+
 --Modifica los registros existentes en una tabla
 --select * from 
   src_enc_liquidacion L 
