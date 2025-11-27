@@ -1,6 +1,8 @@
 -- LA MARCA DE PAGO ES EL APARTADO DE SINU QUE ESTA EN ROJITO , DEBA QUEDAR EN VERDE 
 -- 1. PARA HACER ESO SE DEBE VERIFICAR QUE LA PERSONA HAYA FINANCIACION 
--- 2. VERIFICAR EN ICEBER QUE CUENTE CON LAS CUETAS ACTIVAS IGUAL QUE EN CTAYUDA
+-- 2. VERIFICAR EN ICEBER QUE LA FAMA ESTE LIQUIDAD , Y CUENTE CON LAS CUOTAS ACTIVA IGUAL QUE EN CTAYUDA SI BUSCA FINANCIAR
+
+/*LA EXISTE DOS MASCAS DE PAGO , LA FINANCIERA , Y LA ACCADEMICA , LA FINANCIERA ES LA FAMA LIQUIDADA Y LA ACADEMICA ES FINR17 QUE LA MATRICULA APARESCA EN VERDE */
 
 
 
@@ -26,9 +28,9 @@ WHERE -- Clausula que determina cuentos registros se actualizaran
                             , src_uni_academica U
                           WHERE 
                             B.id_tercero = P.id_tercero
-                            AND B.num_identificacion IN ('1120569110'/*,'14254055','1032378409','1032378409','1022334153','1003623021','1026252338'*/) --Numero de identificacion
+                            AND B.num_identificacion IN ('1014253764') --Numero de identificacion
                             AND U.cod_unidad = P.cod_unidad
                           --AND P.cod_pensum = '1110' 
                           --AND P.cod_unidad = 'VTE01'
                         )
-  AND L.cod_periodo = '25V05';
+  AND L.cod_periodo = '25V06';
